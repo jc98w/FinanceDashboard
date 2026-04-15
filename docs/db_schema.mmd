@@ -1,0 +1,25 @@
+erDiagram
+    USER {
+        objectId _id PK
+        string name
+        string email
+        string password_hash
+    }
+
+    FINACCOUNT {
+        objectId _id PK
+        objectId userId FK
+        string name
+        array tags
+        double currentValue
+    }
+
+    VALUERECORD {
+        objectId _id PK
+        objectId accountId FK
+        double value
+        date timestamp
+    }
+
+    USER ||--o{ FINACCOUNT : "owns"
+    FINACCOUNT ||--o{ VALUERECORD : "tracks"
