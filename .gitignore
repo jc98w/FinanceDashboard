@@ -59,3 +59,7 @@ profile*
 
 # enviroment vars
 .env
+
+# mongobd data
+mongo_staging_data
+mongo_main_data
