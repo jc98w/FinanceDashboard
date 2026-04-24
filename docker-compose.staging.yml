@@ -1,9 +1,8 @@
 services:
   mongodb:
-    volumes:
+    volumes: !override
       - ./mongo_staging_data:/data/db
   
   fastify-server:
-    ports:
-      # FIXME: This is being appended rather than overriding prod port
+    ports: !override
       - "3001:3000"
