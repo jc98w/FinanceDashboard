@@ -1,7 +1,7 @@
 services:
   mongodb:
     volumes: !override
-      - ./mongo_staging_data:/data/db
+      - mongo_data:/finance_dashboard/staging/data/db
   
   backend:
     ports: !override
