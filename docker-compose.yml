@@ -9,7 +9,7 @@ services:
     volumes:
       - ./mongo_main_data:/data/db
   
-  fastify-server:
+  backend:
     build: ./backend
     depends_on:
       mongodb:
@@ -17,3 +17,8 @@ services:
     ports:
       - "0.0.0.0:3000:3000"
     env_file: ./backend/.env
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "0.0.0.0:5173:5173"
