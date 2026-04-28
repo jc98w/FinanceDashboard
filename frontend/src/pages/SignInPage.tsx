@@ -21,7 +21,7 @@ export default function LandingPage() {
 
                     />
                 </div>
-                <button className='bg-emerald-700 hover:bg-emerald-500 py-4 px-4 text-white mx-auto rounded-sm'>Submit</button>
+                <button type='submit' className='btn-main'>Submit</button>
             </form>
         </div>
     )
