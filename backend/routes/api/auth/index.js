@@ -14,6 +14,13 @@ export default async (fastify, opts) => {
         }
     }
 
+    // ping api/auth
+    fastify.get('/', async (req, rep) => {
+        return {
+            services: "auth api"
+        }
+    })
+
     // user register
     fastify.post('/register', async (req, reply) => {
         const newName = req.body.name

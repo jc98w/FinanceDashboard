@@ -10,7 +10,9 @@ services:
       - mongo_data:/finance_dashboard/main/data/db
   
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      target: production
     depends_on:
       mongodb:
         condition: service_healthy
