@@ -7,7 +7,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./mongo_main_data:/data/db
+      - mongo_data:/finance_dashboard/main/data/db
   
   backend:
     build: 
@@ -22,5 +22,13 @@ services:
 
   frontend:
     build: ./frontend
+    depends_on:
+      mongodb:
+        condition: service_healthy
     ports:
       - "0.0.0.0:5173:5173"
+  
+  
+volumes:
+  mongo_data:
+  
