@@ -1,1 +1,1 @@
-docker compose -p fin-dash-staging -f .\docker-compose.yml -f .\docker-compose.staging.yml up -d
+docker compose -p fin-dash-staging -f .\docker-compose.yml -f .\docker-compose.staging.yml up -d --build
