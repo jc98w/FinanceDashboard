@@ -21,3 +21,4 @@ services:
       - /app/node_modules
     environment:
       - VITE_PORT:5173
+    command: npx nodemon -L --exec "vite"
