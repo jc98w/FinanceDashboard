@@ -49,7 +49,7 @@ export default async (fastify, opts) => {
             const token = fastify.jwt.sign(
                 { id: user._id.toString(), username: user.username },
                 { expiresIn: '24hr' })
-            return token
+            return  { token: token }
         }
         else {
             return reply.send({ error: 'Incorrect password or username. Retry.' })
