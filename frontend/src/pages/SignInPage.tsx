@@ -1,8 +1,10 @@
-import { type SubmitEvent } from 'react'
+import { useState } from 'react';
+import { type SubmitEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext.tsx';
 
 export default function SignInPage() {
     const { login } = useAuth();
+    const [ message, setMessage ] = useState<string>();
     
     const handleLogin = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,8 +25,12 @@ export default function SignInPage() {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Token received. Redirecting...');
-                login(data.token);
+                if (data.error) {
+                    setMessage(data.error);
+                }
+                else {
+                    login(data.token);
+                }
             }
         } catch (error) {
             console.log('Submittion failed: ', error)
@@ -53,6 +59,7 @@ export default function SignInPage() {
 
                     />
                 </div>
+                <p className='text-sm px-4 py-5'>{ message }</p>
                 <button type='submit' className='btn-main'>Submit</button>
             </form>
         </div>
