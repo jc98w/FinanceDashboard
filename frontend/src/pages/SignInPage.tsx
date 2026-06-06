@@ -45,7 +45,8 @@ export default function SignInPage() {
                         className='border'
                         type='text'
                         name='username'
-
+                        autoComplete='username'
+                        required
                     />
                 </div>
                 <div className='px-4 py-5'>
@@ -54,7 +55,8 @@ export default function SignInPage() {
                         className='border'
                         type='password'
                         name='password'
-
+                        autoComplete='password'
+                        required
                     />
                 </div>
                 <p className='text-sm px-4 py-5'>{ message }</p>
