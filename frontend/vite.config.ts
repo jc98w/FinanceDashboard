@@ -20,7 +20,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://172.19.0.3:3000',
+        target: 'http://backend:3000',
         changeOrigin: true,
       }
     }
