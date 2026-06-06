@@ -12,8 +12,6 @@ export default function SignInPage() {
         const formData = new FormData(event.currentTarget);
         const payload = Object.fromEntries(formData);
 
-        console.log(JSON.stringify(payload));
-
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
