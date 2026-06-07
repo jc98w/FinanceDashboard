@@ -14,6 +14,13 @@ export default async (fastify, opts) => {
         }
     }
 
+    // ping api/auth
+    fastify.get('/', async (req, rep) => {
+        return {
+            services: "auth api"
+        }
+    })
+
     // user register
     fastify.post('/register', async (req, reply) => {
         const newName = req.body.name
@@ -42,7 +49,7 @@ export default async (fastify, opts) => {
             const token = fastify.jwt.sign(
                 { id: user._id.toString(), username: user.username },
                 { expiresIn: '24hr' })
-            return token
+            return  { token: token }
         }
         else {
             return reply.send({ error: 'Incorrect password or username. Retry.' })

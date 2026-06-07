@@ -1,13 +1,25 @@
-FROM node:latest
+#-----BASE---------------
+FROM node:latest AS base
 
 WORKDIR /app
 
 COPY package*.json ./
+
+#-----Development--------
+FROM base AS development
 
 RUN npm install
 
 COPY . .
 
 EXPOSE 3000
+
+#-----Production----------
+FROM base AS production
+
+# FIXME: Cut down to just mandatory packages
+RUN npm install
+
+COPY . .
 
 CMD [ "npm", "start" ]

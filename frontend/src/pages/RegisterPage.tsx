@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { type SubmitEvent } from 'react';
-import { useAuth } from '../contexts/AuthContext.tsx';
+import { useState } from 'react'
+import { type SubmitEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export default function SignInPage() {
-    const { login } = useAuth();
+export default function RegisterPage() {
+    const navigate = useNavigate();
     const [ message, setMessage ] = useState<string>();
-    
-    const handleLogin = async (event: SubmitEvent<HTMLFormElement>) => {
+
+    const handleRegister = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
         const payload = Object.fromEntries(formData);
 
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -22,12 +22,12 @@ export default function SignInPage() {
             })
 
             if (response.ok) {
-                const data = await response.json();
-                if (data.error) {
-                    setMessage(data.error);
+                const registerStatus = await response.json();
+                if (registerStatus.error) {
+                    setMessage(registerStatus.error);
                 }
                 else {
-                    login(data.token);
+                    navigate(`/welcome/?name=${payload.name}`)
                 }
             }
         } catch (error) {
@@ -35,10 +35,20 @@ export default function SignInPage() {
         }
     }
 
-    return(
+    return (
         <div>
-            <p>Sign In!</p>
-            <form onSubmit={handleLogin}>
+            <p>Register!</p>
+            <form onSubmit={ handleRegister }>
+                <div className='px-4 py-5'>
+                    <label>Name: </label>
+                    <input
+                        className='border'
+                        type='text'
+                        name='name'
+                        autoComplete='name'
+                        required
+                    />
+                </div>
                 <div className='px-4 py-5'>
                     <label>Username: </label>
                     <input
