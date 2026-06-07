@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext.tsx'
 import Navbar from './components/Navbar.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import RegisterPage from './pages/RegisterPage.tsx'
+import WelcomePage from './pages/WelcomePage.tsx'
 import SignInPage from './pages/SignInPage.tsx'
 import AccountsPage from './pages/AccountsPage.tsx'
 
@@ -18,6 +19,7 @@ function App() {
             <Routes>
               <Route path='/' element={<LandingPage />} />
               <Route path='/register' element={<RegisterPage />} />
+              <Route path='/welcome' element={<WelcomePage />} />
               <Route path='/login' element={<SignInPage />} />
               <Route path='/accounts' element={<AccountsPage />} />
             </Routes>

@@ -27,7 +27,7 @@ export default function RegisterPage() {
                     setMessage(registerStatus.error);
                 }
                 else {
-                    navigate('/login')
+                    navigate(`/welcome/?name=${payload.name}`)
                 }
             }
         } catch (error) {
