@@ -5,6 +5,8 @@
  */
 
 export default async (fastify, opts) => {
+    const { Record } = fastify.db
+    
     fastify.get('/', async (req, reply) => {
         return {
             service: 'records api'
@@ -15,6 +17,6 @@ export default async (fastify, opts) => {
     // FIXME: Currently just finding a random record
     fastify.get('/:accountNum', async (req, rep) => {
         const accountNum = req.params.accountNum
-        return await fastify.records.findOne()
+        return await Record.findOne()
     })
 }

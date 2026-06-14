@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom'
 
 export default function RegisterPage() {
     const navigate = useNavigate();
-    const [ message, setMessage ] = useState<string>();
+    const [ errMessages, setErrMessages ] = useState<Array<string>>(Array());
 
     const handleRegister = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
+        console.log("%cHandleRegister", "color: blue")
 
         const formData = new FormData(event.currentTarget);
         const payload = Object.fromEntries(formData);
@@ -20,18 +21,19 @@ export default function RegisterPage() {
                 },
                 body: JSON.stringify(payload)
             })
+            const registerStatus = await response.json();
 
+            console.log("%cRegister form submitted", "color: blue")
             if (response.ok) {
-                const registerStatus = await response.json();
-                if (registerStatus.error) {
-                    setMessage(registerStatus.error);
-                }
-                else {
-                    navigate(`/welcome/?name=${payload.name}`)
-                }
+                console.log("%cResponse ok", "color: green")
+                navigate(`/welcome/?name=${payload.name}`)
+            }
+            else {
+                console.log(registerStatus.error)
+                setErrMessages(registerStatus.error)
             }
         } catch (error) {
-            console.log('Submittion failed: ', error)
+            setErrMessages(["Server error, unable to process request"])
         }
     }
 
@@ -69,7 +71,9 @@ export default function RegisterPage() {
                         required
                     />
                 </div>
-                <p className='text-sm px-4 py-5'>{ message }</p>
+                    { errMessages.map((msg,  index) => (
+                        <p className='text-sm text-red-700 text-left px-4' key={ index }>*{ msg }</p>
+                    ))}
                 <button type='submit' className='btn-main'>Submit</button>
             </form>
         </div>

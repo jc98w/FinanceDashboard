@@ -3,6 +3,8 @@
 import bcrypt from 'bcrypt'
 
 export default async (fastify, opts) => {
+    const { User } = fastify.db
+
     const loginSchema = {
         body: {
             type: 'object',
@@ -23,27 +25,42 @@ export default async (fastify, opts) => {
 
     // user register
     fastify.post('/register', async (req, reply) => {
-        const newName = req.body.name
-        const newUsername = req.body.username
-        const pwHash = await bcrypt.hash(req.body.password, 12)
-
-        fastify.log.info(`New user attempt: ${newName}, ${newUsername}`)
-
-        // Check for existing usernames
-        const existingUser = await fastify.users.findOne({username: newUsername})
-        fastify.log.info(`Existing user: ${existingUser}`)
-        if (existingUser) {
-            return reply.code(409).send({error: 'Username is already in use'})
+        const newUser = new User({
+            name: req.body.name,
+            username: req.body.username,
+            password: req.body.password
+        })
+        
+        try {
+            await newUser.save()
+        } catch (err) {
+            if (err.name !== 'ValidationError') {
+                console.log(`\x1b[31m${err.name}: ${err.message}`)
+                return reply.code(400).send({error: ["An unexpected error occured"]})
+            }
+            let errMessage = []
+            const fields = ['name', 'username', 'password']
+            for (let field in fields) {
+                try {
+                    errMessage.push(err.errors[fields[field]].message)
+                    console.log('\x1b[31m', err.errors[fields[field]].message)
+                }
+                catch {
+                    console.log(`No error message from ${fields[field]}`)
+                }
+                
+            }
+            return reply.code(409).send({ error: errMessage })
         }
-
-        await fastify.mongo.db.collection('users').insertOne({name: newName, username: newUsername, passwordHash: pwHash})
 
         return { status: 'User created' }
     })
 
     // user login
     fastify.post('/login', async (req, reply) => {
-        const user = await fastify.users.findOne({username: req.body.username})
+        fastify.log.info('attempting login')
+        const user = await User.findOne({username: req.body.username})
+        fastify.log.info(user)
 
         if (user && await bcrypt.compare(req.body.password, user.passwordHash)) {
             const token = fastify.jwt.sign(
