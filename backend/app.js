@@ -1,12 +1,16 @@
 'use strict'
 
-const path = require('node:path')
-const AutoLoad = require('@fastify/autoload')
+import path from 'path'
+import AutoLoad from '@fastify/autoload'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Pass --options via CLI arguments in command to enable these options.
 const options = {}
 
-module.exports = async function (fastify, opts) {
+export default async function (fastify, opts) {
   // Place here your custom code!
 
   // Do not touch the following lines
@@ -27,4 +31,4 @@ module.exports = async function (fastify, opts) {
   })
 }
 
-module.exports.options = options
+export { options }

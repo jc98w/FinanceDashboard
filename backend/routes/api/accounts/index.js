@@ -5,6 +5,8 @@
  */
 
 export default async (fastify, opts) => {
+    const { Account } = fastify.db
+
     fastify.get('/', async (req, reply) => {
         return {
             service: 'accounts api'
@@ -14,7 +16,7 @@ export default async (fastify, opts) => {
     // Basic READ
     fastify.get('/:name', async (req, reply) => {
         const name = req.params.name;
-        const result = await fastify.accounts.findOne({name: name})
+        const result = await Account.findOne({name: name})
         return result
     })
 }

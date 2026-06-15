@@ -5,6 +5,7 @@
  */
 
 export default async (fastify, opts) => {
+    const { User } = fastify.db
     fastify.get('/', async function(req, reply) {
         return {
             service: 'users api'
@@ -14,7 +15,7 @@ export default async (fastify, opts) => {
     // Basic READ
     fastify.get('/:name', async function (req, reply) {
         const name = req.params.name;
-        const result = await fastify.users.findOne({name: req.params.name})
+        const result = await User.findOne({name: req.params.name})
         return result
     })
 }

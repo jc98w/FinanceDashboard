@@ -2,6 +2,7 @@
   "name": "financedashboard",
   "version": "1.0.0",
   "description": "This project was bootstrapped with Fastify-CLI.",
+  "type": "module",
   "main": "app.js",
   "directories": {
     "test": "test"
@@ -24,6 +25,7 @@
     "fastify": "^5.0.0",
     "fastify-cli": "^8.0.0",
     "fastify-plugin": "^5.0.0",
+    "mongoose": "^8.0.0",
     "nodemon": "^3.1.14"
   }
 }
