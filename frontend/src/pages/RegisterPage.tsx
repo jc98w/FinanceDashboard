@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AuthLayout } from '../layouts/AuthLayout'
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -38,44 +39,6 @@ export default function RegisterPage() {
     }
 
     return (
-        <div>
-            <p>Register!</p>
-            <form onSubmit={ handleRegister }>
-                <div className='px-4 py-5'>
-                    <label>Name: </label>
-                    <input
-                        className='border'
-                        type='text'
-                        name='name'
-                        autoComplete='name'
-                        required
-                    />
-                </div>
-                <div className='px-4 py-5'>
-                    <label>Username: </label>
-                    <input
-                        className='border'
-                        type='text'
-                        name='username'
-                        autoComplete='username'
-                        required
-                    />
-                </div>
-                <div className='px-4 py-5'>
-                    <label>Password: </label>
-                    <input
-                        className='border'
-                        type='password'
-                        name='password'
-                        autoComplete='password'
-                        required
-                    />
-                </div>
-                    { errMessages.map((msg,  index) => (
-                        <p className='text-sm text-red-700 text-left px-4' key={ index }>*{ msg }</p>
-                    ))}
-                <button type='submit' className='btn-main'>Submit</button>
-            </form>
-        </div>
+        <AuthLayout title='Register' submitHandler={ handleRegister } errMessages={ errMessages } inputs={['Name', 'Username', 'Password']}/>
     )
 }

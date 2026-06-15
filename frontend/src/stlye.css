@@ -1,20 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 @import "tailwindcss";
-@tailwind utilities;
 
 @theme {
     --font-main: "IBM Plex Sans", sans-serif;
 }
 
-@layer components {
-    .btn-main {
+body {
+    background-color: var(--color-gray-800);
+    color: var(--color-gray-50);
+}
+
+@utility btn-main {
         /* padding and shape */
-        @apply p-4 rounded-sm;
+        @apply px-4 py-3 rounded-sm;
 
         /* color */
         @apply bg-emerald-700 hover:bg-emerald-500;
 
         /* text */
         @apply text-white uppercase text-sm tracking-wider mx-auto;
-    }
 }
