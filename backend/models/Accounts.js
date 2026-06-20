@@ -26,5 +26,14 @@ const accountSchema = new mongoose.Schema({
     strict: true
 })
 
+accountSchema.pre('validate', async function(next) {
+    // Ensure user doesn't duplicate accounts names
+    const existingAccount = await this.collection.findOne({userId: this.userId, accountName: this.accountName })
+
+    if (existingAccount) {
+        this.invalidate('accountName', 'This user already has account under this name')
+    }
+})
+
 const Account = mongoose.model('Account', accountSchema)
 export { Account }

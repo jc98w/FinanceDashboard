@@ -12,7 +12,7 @@ async function authPlugin (fastify, opts) {
             await req.jwtVerify();
         }
         catch (err) {
-            reply.send(err);
+            reply.status(401).send({ error: 'Unauthorized: Missing or invalid token' });
         }
     })
 

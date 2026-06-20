@@ -64,7 +64,7 @@ export default async (fastify, opts) => {
 
         if (user && await bcrypt.compare(req.body.password, user.passwordHash)) {
             const token = fastify.jwt.sign(
-                { id: user._id.toString(), username: user.username },
+                { useId: user._id.toString(), username: user.username },
                 { expiresIn: '24hr' })
             return  { token: token }
         }
