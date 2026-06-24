@@ -41,9 +41,15 @@ export default async (fastify, opts) => {
 
     // Basic READ
     fastify.get('/:accountId', { preValidation: [fastify.authenticate] } , async (req, reply) => {
-
         const accountId = req.params.accountId;
         const result = await Account.findOne({objectId: accountId})
         return result
+    })
+
+    // Get all accounts for a user
+    fastify.get('/me', { preValidation: [fastify.authenticate] }, async(req, reply) => {
+        const { userId } = req.user;
+        const result = await Account.find({ userId: userId })
+        return { accounts: result }
     })
 }
