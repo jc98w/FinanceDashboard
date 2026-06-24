@@ -7,7 +7,7 @@ export default function Navbar() {
   return(
       <nav className="bg-emerald-700 py-4 px-4 text-white mx-auto" >
         <ul className="flex gap-x-5 gap-y-1 flex-wrap">
-          <li className="mr-auto"><Link to="/" className="btn-main">Home</Link></li>
+          <li className="mr-auto"><Link to="/" className="btn-main"><i className='fa fa-home'></i> Home</Link></li>
 
           { isAuthenticated ? (
             <>
