@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
     isAuthenticated: boolean;
+    isLoading: boolean;
     login: (token: string) => void;
     logout: () => void;
 }
@@ -12,14 +13,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(false);
+    const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const navigate = useNavigate();
 
     // Check if user has already received token
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            setIsAuthenticated(true);
+        const checkForToken = async() => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                setIsAuthenticated(true);
+            }
+            setIsLoading(false);
         }
+        checkForToken();
     }, [])
 
     const login = (token: string) => {
@@ -35,7 +41,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
             { children }
         </AuthContext.Provider>
     )
