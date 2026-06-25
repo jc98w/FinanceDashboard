@@ -68,8 +68,8 @@ export default function AddAccountModal({isOpen, onClose}: AddAccountModalProps)
                 <button className='btn-main text-sm' title='exit' onClick={ onClose }><i className='fa fa-times'/></button>
             </div>
             <form onSubmit={ handleSubmit } className='flex flex-col gap-4 py-3'>
-                <FormInput className='mx-auto' label='Account Name'/>
-                <FormInput type='number' label='Balance'/>
+                <FormInput label='Account Name' required/>
+                <FormInput type='number' label='Balance' defaultValue={0} required/>
                 <FormInput label='Tags'/>
                 {
                     errMessages.map((value, index) => (
