@@ -5,7 +5,7 @@ export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
 
   return(
-      <nav className="bg-emerald-700 py-4 px-4 text-white mx-auto" >
+      <nav className="bg-emerald-700 py-4 px-4 text-white mx-auto shadow-xl/30" >
         <ul className="flex gap-x-5 gap-y-1 flex-wrap">
           <li className="mr-auto"><Link to="/" className="btn-main"><i className='fa fa-home'></i> Home</Link></li>
 
