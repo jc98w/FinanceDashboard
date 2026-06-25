@@ -19,5 +19,5 @@ body {
         @apply bg-emerald-700 hover:bg-emerald-500;
 
         /* text */
-        @apply text-white uppercase text-sm tracking-wider mx-auto;
+        @apply text-white uppercase text-sm tracking-wider;
 }
