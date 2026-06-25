@@ -27,7 +27,7 @@ export const AuthLayout = ({title, submitHandler, errMessages, inputs = [], chil
                     <p className='text-sm text-red-700 text-left w-full text-wrap word-break px-4' key={index}>*{msg}</p>
                 ))}
 
-                <button type='submit' className='btn-main shadow-lg/30'>Submit</button>
+                <button type='submit' className='btn-main mx-auto shadow-lg/30'>Submit</button>
 
             </div>
 
