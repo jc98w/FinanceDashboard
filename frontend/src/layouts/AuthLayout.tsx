@@ -17,7 +17,7 @@ export const AuthLayout = ({title, submitHandler, errMessages, inputs = [], chil
                 <div className='flex flex-col gap-4 px-5'>
                     {
                         inputs.map((value, index) => (
-                            <FormInput key={ index } label={ value } required/>
+                            <FormInput key={ index } label={ value } type={ value.toLowerCase() === 'password' ? 'password' : 'text' } required/>
                         ))
                     }
                 </div>

@@ -69,7 +69,7 @@ export default function AddAccountModal({isOpen, onClose}: AddAccountModalProps)
             </div>
             <form onSubmit={ handleSubmit } className='flex flex-col gap-4 py-3'>
                 <FormInput className='mx-auto' label='Account Name'/>
-                <FormInput label='Balance'/>
+                <FormInput type='number' label='Balance'/>
                 <FormInput label='Tags'/>
                 {
                     errMessages.map((value, index) => (
