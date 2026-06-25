@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AccountCard from '../components/AccountCard';
 import { useAuth } from '../contexts/AuthContext';
+import AccountCardView from '../components/AccountCardView'
+import AccountTableView from '../components/AccountTableView'
+import type { Account } from '../types/account'
 
-interface Account {
-    userId: string;
-    accountName: string;
-    tags?: string[];
-    curretValue?: number;
+type AccountView = 'table' | 'card';
+const ViewMap = {
+    card: AccountCardView,
+    table: AccountTableView
 }
 
 export default function AccountsPage() {
     const { isLoading, isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [ accounts, setAccounts ] = useState<Account[]>([]);
+    const [ viewMode, setViewMode ] = useState<AccountView>('table');
+    const ActiveView = ViewMap[viewMode]
 
     // Redirect user if not logged in
     useEffect(() => {
@@ -52,11 +55,20 @@ export default function AccountsPage() {
 
     return(
         <div className='p-10'>
-            <div className='flex flex-row gap-10'>
+            <div className='flex flex-row flex-wrap align-center'>
+                <h1 className='text-xl text-left mr-auto'>ACCOUNTS</h1>
+                <div className='bg-emerald-700 rounded-sm'>
+                    <button className='btn-main text-xs p-2 tracking-normal' title='table view' onClick={(event)=>{event.preventDefault(); setViewMode('table')}}><i className='fa fa-table'/></button>
+                    <button className='btn-main text-xs p-2 tracking-normal' title='card view' onClick={(event)=>{event.preventDefault(); setViewMode('card')}}><i className='fa fa-arrows-h'/></button>
+                </div>
+            </div>
+            <div className='mt-2'>
                 {
-                    accounts.map((value, index) => (
-                        <AccountCard key={ index } accountName={ value.accountName } tags={ value.tags } currentValue={ value.curretValue }/>
-                    ))
+                    accounts.length === 0 ? (
+                        <p>No Accounts Found</p>
+                    ) : (
+                        <ActiveView accounts={ accounts }/>
+                    )
                 }
             </div>
         </div>
