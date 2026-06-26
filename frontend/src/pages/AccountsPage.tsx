@@ -72,7 +72,7 @@ export default function AccountsPage() {
                     )
                 }
             </div>
-            <AddAccountModal isOpen={ isModalOpen } onClose={ () => setIsModalOpen(false) } />
+            <AddAccountModal accounts={ accounts } isOpen={ isModalOpen } onClose={ () => setIsModalOpen(false) } />
         </div>
     )
 }

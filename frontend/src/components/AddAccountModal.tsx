@@ -1,26 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
 import type { SubmitEvent } from 'react'
 import FormInput from './FormInput';
+import type { Account } from '../types/account'
 
 interface AddAccountModalProps {
+    accounts: Account[];
     isOpen: boolean;
     onClose: ()=> void;
 }
 
-export default function AddAccountModal({isOpen, onClose}: AddAccountModalProps) {
+export default function AddAccountModal({accounts, isOpen, onClose}: AddAccountModalProps) {
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
     const [ errMessages, setErrMessages ] = useState<string[]>([]);
 
     const handleSubmit = async(event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         
         const formData = new FormData(event.currentTarget);
-        // const payload = Object.fromEntries(formData);
+
         const payload = {
-            accountName: formData.get('account name'),
-            currentValue: formData.get('balance'),
-            tags: formData.get('tags')
+            accountName: formData.get('account name') as string,
+            currentValue: Number(formData.get('balance') as string),
+            tags: formData.get('tags') as string
         }
+        const newAccount: Account = {
+            userId: '',
+            accountName: payload.accountName,
+            currentValue: payload.currentValue,
+            tags: payload.tags.split(',')
+        }       
 
         try {
             const response = await fetch('/api/accounts/create', {
@@ -34,6 +43,7 @@ export default function AddAccountModal({isOpen, onClose}: AddAccountModalProps)
             console.log(response)
 
             if (response.ok) {
+                accounts.push(newAccount)
                 onClose()
             }
             else {
@@ -53,9 +63,17 @@ export default function AddAccountModal({isOpen, onClose}: AddAccountModalProps)
 
     useEffect(() => {
         const dialog = dialogRef.current;
-        if (!dialog) return;
+        const form = formRef.current;
+        if (!dialog || !form) return;
 
-        isOpen ? dialog.showModal() : dialog.close();
+        if (isOpen) {
+            dialog.showModal();
+        }
+        else {
+            form.reset();
+            dialog.close();
+        }
+
     }, [isOpen])
 
     return (
@@ -67,7 +85,7 @@ export default function AddAccountModal({isOpen, onClose}: AddAccountModalProps)
                 <h2 className='pl-5 py-3 mr-auto my-auto'>New Account</h2>
                 <button className='btn-main text-sm' title='exit' onClick={ onClose }><i className='fa fa-times'/></button>
             </div>
-            <form onSubmit={ handleSubmit } className='flex flex-col gap-4 py-3'>
+            <form ref={ formRef } onSubmit={ handleSubmit } className='flex flex-col gap-4 py-3'>
                 <FormInput label='Account Name' required/>
                 <FormInput type='number' label='Balance' defaultValue={0} required/>
                 <FormInput label='Tags'/>
