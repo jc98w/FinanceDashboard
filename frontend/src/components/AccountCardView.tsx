@@ -14,7 +14,7 @@ export default function AccountCardView({ accounts }: ViewProps) {
             <div className='flex flex-row gap-4'>
                 {
                     accounts.map((value, index) => (
-                        <AccountCard className='w-60 h-60 shrink-0 snap-start' key={ index } accountName={ value.accountName } tags={ value.tags }/>
+                        <AccountCard className='w-60 h-60 shrink-0 snap-start' key={ index } accountName={ value.accountName } currentValue={ value.currentValue } tags={ value.tags }/>
                     ))
                 }
             </div>
