@@ -6,23 +6,23 @@ interface ViewProps {
 
 export default function AccountTableView({ accounts }: ViewProps) {
     return (
-        <div className='bg-gray-300 rounded-sm shadow-xl/30'>
-            <table className='text-left table-fixed border-separate'>
+        <div className='bg-gray-300 rounded-sm overflow-x-auto shadow-xl/30'>
+            <table className='text-left table-auto w-full'>
                 <thead>
-                    <tr className='bg-emerald-700 [&>th]:pl-2'>
-                        <th className='w-lg'>NAME</th>
-                        <th className='w-sm'>BALANCE</th>
-                        <th className='w-3xl'>TAGS</th>
+                    <tr className='bg-emerald-700 [&>th]:pl-2 [&>th]:py-3 [&>th]:font-normal'>
+                        <th className='whitespace-nowrap'>Name</th>
+                        <th className='whitespace-nowrap'>Balance</th>
+                        <th className='whitespace-nowrap'>Tags</th>
                     </tr>
                 </thead>
                 
                 <tbody>
                 {
                     accounts.map((value, index) => (
-                        <tr key={ index } className='text-gray-900 [&>td]:border [&>td]:border-gray-800 [&>td]:pr-10 [&>td]:pl-2'>
-                            <td>{ value.accountName }</td>
-                            <td>${ value.currentValue.toFixed(2) }</td>
-                            <td className='text-sm lowercase'>{ value.tags.join(', ') }</td>
+                        <tr key={ index } className='text-gray-900 border-b border-gray-400 [&>td]:py-3 [&>td]:pl-2'>
+                            <td className='whitespace-nowrap'>{ value.accountName }</td>
+                            <td className='whitespace-nowrap'>${ value.currentValue.toFixed(2) }</td>
+                            <td className='text-sm lowercase whitespace-nowrap'>{ value.tags.join(', ') }</td>
                         </tr>
                     ))
                 }
