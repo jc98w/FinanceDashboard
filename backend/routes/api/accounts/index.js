@@ -1,13 +1,14 @@
 'use strict'
 
 import { Account } from '../../../models/Accounts.js'
+import { Record } from '../../../models/Records.js'
+import mongoose from 'mongoose'
 
 /**
  * API for accessing financial account
  */
 
 export default async (fastify, opts) => {
-    const { Account } = fastify.db
 
     fastify.get('/', async (req, reply) => {
         return {
@@ -60,7 +61,14 @@ export default async (fastify, opts) => {
     // Basic READ
     fastify.get('/:accountId', { preValidation: [fastify.authenticate] } , async (req, reply) => {
         const accountId = req.params.accountId;
-        const result = await Account.findOne({objectId: accountId})
+        if (!mongoose.isValidObjectId(accountId)) {
+            return reply.status(400).send({ error: "Invalid account ID"})
+        }
+
+        const result = await Account.findOne({_id: accountId, userId: req.user.userId})
+        if (!result) {
+            return reply.status(404).send({ error: "Account not found" })
+        }
         return result
     })
 
