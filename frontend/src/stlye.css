@@ -21,3 +21,11 @@ body {
         /* text */
         @apply text-white uppercase text-sm tracking-wider;
 }
+
+@utility btn-mini {
+    @apply aspect-square rounded-sm;
+
+    @apply bg-emerald-700 hover:bg-emerald-500;
+
+    @apply text-white uppercase text-sm;
+}
