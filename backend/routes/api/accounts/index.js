@@ -78,4 +78,21 @@ export default async (fastify, opts) => {
         const result = await Account.find({ userId: userId })
         return { accounts: result }
     })
+
+    fastify.delete('/:accountId', { preValidation: [fastify.authenticate] }, async (req, reply) => {
+        const accountId = req.params.accountId;
+        if (!mongoose.isValidObjectId(accountId)) {
+            reply.status(400).send({ error: "Invalid account ID" })
+        }
+
+        const response = await Account.deleteOne({ _id: accountId, userId: req.user.userId})
+        const responseRecord = await Record.deleteMany({ accountId: accountId })
+
+        if (response.acknowledged && response.deletedCount === 1) {
+            return { success: true, message: "Account deleted" }
+        }
+        else {
+            return reply.status(400).send({ error: "Unable to delete account", response: response })
+        }
+    })
 }
