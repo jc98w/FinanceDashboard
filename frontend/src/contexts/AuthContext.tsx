@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (token: string) => void;
+    login: () => void;
     logout: () => void;
 }
 
@@ -18,24 +18,28 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     // Check if user has already received token
     useEffect(() => {
-        const checkForToken = async() => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                setIsAuthenticated(true);
+        const checkAuth = async() => {
+            const response = await fetch('/api/auth/status', {method:"GET", credentials: "include"});
+            if (response.ok) {
+                const data = await response.json()
+                if (data.status === 'authenticated'){
+                    setIsAuthenticated(true);
+                }
             }
             setIsLoading(false);
         }
-        checkForToken();
+        checkAuth();
     }, [])
 
-    const login = (token: string) => {
-        localStorage.setItem('token', token);
+    const login = () => {
         setIsAuthenticated(true);
         navigate("/accounts");
     }
 
-    const logout = () => {
-        localStorage.removeItem('token');
+    const logout = async () => {
+        await fetch('/api/auth/logout', {
+            method: "POST",
+        })
         setIsAuthenticated(false);
         navigate("/")
     }

@@ -28,7 +28,7 @@ export default function SignInPage() {
                     setErrMessages([data.error]);
                 }
                 else {
-                    login(data.token);
+                    login();
                 }
             }
         }

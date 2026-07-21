@@ -66,10 +66,29 @@ export default async (fastify, opts) => {
             const token = fastify.jwt.sign(
                 { userId: user._id.toString(), username: user.username },
                 { expiresIn: '24hr' })
-            return  { token: token }
+
+            reply.setCookie('token', token, {
+                path: '/',
+                secure: process.env.COOKIE_SECURE === true, // set COOKIE_SECURE to true to use https
+                httpOnly: true,
+                sameSite: 'strict',
+                signed: true
+            })
+
+            return  { success: true }
         }
         else {
             return reply.send({ error: 'Incorrect password or username. Retry.' })
         }
+    })
+
+    fastify.post('/logout', async (req, reply) => {
+        reply.clearCookie('token')
+        reply.send({success: true, message: "Cookies cleared"})
+    })
+
+    // Check user log in status
+    fastify.get('/status', { preValidation: [fastify.authenticate] }, async (req, reply) => {
+        reply.status(200).send({ status: 'authenticated' })
     })
 }
