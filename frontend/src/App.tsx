@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { ToastContainer } from 'react-toastify'
 import Navbar from './components/Navbar.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import RegisterPage from './pages/RegisterPage.tsx'
@@ -26,6 +27,7 @@ function App() {
           </div>
         </AuthProvider>
       </BrowserRouter>
+      <ToastContainer position="bottom-center" autoClose={3000}/>
     </div>
   )
 }
