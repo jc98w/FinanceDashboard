@@ -1,64 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { SubmitEvent } from 'react'
 import FormInput from './FormInput';
+import { useAccountCtx } from '../contexts/AccountContext';
 import type { Account } from '../types/account'
 
 interface AddAccountModalProps {
-    accounts: Account[];
     isOpen: boolean;
     onClose: ()=> void;
 }
 
-export default function AddAccountModal({accounts, isOpen, onClose}: AddAccountModalProps) {
+export default function AddAccountModal({ isOpen, onClose}: AddAccountModalProps) {
+    const { addAccount } = useAccountCtx();
     const dialogRef = useRef<HTMLDialogElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const [ errMessages, setErrMessages ] = useState<string[]>([]);
 
     const handleSubmit = async(event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         
         const formData = new FormData(event.currentTarget);
 
-        const payload = {
+        const newAccount: Account = {
             accountName: formData.get('account name') as string,
             currentValue: Number(formData.get('balance') as string),
-            tags: formData.get('tags') as string
+            tags: (formData.get('tags') as string).split(',')
         }
-        const newAccount: Account = {
-            userId: '',
-            accountName: payload.accountName,
-            currentValue: payload.currentValue,
-            tags: payload.tags.split(',')
-        }       
 
-        try {
-            const response = await fetch('/api/accounts/create', {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(payload)
-            })
-            console.log(response)
-
-            if (response.ok) {
-                accounts.push(newAccount)
-                onClose()
-            }
-            else {
-                try {
-                    const data = await response.json()
-                    setErrMessages(data.error)
-                }
-                catch {
-                    setErrMessages(['Failed to create account'])
-                }
-            }
-        }
-        catch (err) {
-            setErrMessages(['Failed to contact server'])
-        }
+        addAccount(newAccount);
+        onClose();
     }
 
     useEffect(() => {
@@ -89,11 +57,6 @@ export default function AddAccountModal({accounts, isOpen, onClose}: AddAccountM
                 <FormInput label='Account Name' required/>
                 <FormInput type='number' label='Balance' defaultValue={0} required/>
                 <FormInput label='Tags'/>
-                {
-                    errMessages.map((value, index) => (
-                        <p className='text-sm text-red-700 text-left w-full text-wrap word-break px-4' key={ index }>*{ value }</p>
-                    ))
-                }
                 <button type='submit' title='create account' className='btn-main mx-auto shadow-xl/30'>Create Account</button>
             </form>
         </dialog>

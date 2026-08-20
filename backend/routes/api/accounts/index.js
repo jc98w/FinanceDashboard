@@ -1,13 +1,14 @@
 'use strict'
 
 import { Account } from '../../../models/Accounts.js'
+import { Record } from '../../../models/Records.js'
+import mongoose from 'mongoose'
 
 /**
  * API for accessing financial account
  */
 
 export default async (fastify, opts) => {
-    const { Account } = fastify.db
 
     fastify.get('/', async (req, reply) => {
         return {
@@ -60,7 +61,14 @@ export default async (fastify, opts) => {
     // Basic READ
     fastify.get('/:accountId', { preValidation: [fastify.authenticate] } , async (req, reply) => {
         const accountId = req.params.accountId;
-        const result = await Account.findOne({objectId: accountId})
+        if (!mongoose.isValidObjectId(accountId)) {
+            return reply.status(400).send({ error: "Invalid account ID"})
+        }
+
+        const result = await Account.findOne({_id: accountId, userId: req.user.userId})
+        if (!result) {
+            return reply.status(404).send({ error: "Account not found" })
+        }
         return result
     })
 
@@ -69,5 +77,48 @@ export default async (fastify, opts) => {
         const { userId } = req.user;
         const result = await Account.find({ userId: userId })
         return { accounts: result }
+    })
+
+    fastify.put('/update', {preValidation: [fastify.authenticate] }, async(req, reply) => {
+        const { userId } = req.user;
+        const { targetAccountName } = req.body;
+        const { accountName, currentValue, tags } = req.body.updates;
+        
+        try {
+            const account = await Account.findOne({ userId: userId, accountName: targetAccountName });
+            if (!account) return reply.status(404).send({ error: "Account not found" });
+            if (accountName) account.accountName = accountName;
+            if (currentValue) account.currentValue = currentValue;
+            if (tags) account.tags = tags;
+
+            await account.save()
+        
+            reply.status(200).send({ status: 'Updates successful' })
+        }
+        catch (err) {
+            reply.status(500).send({ error: 'Failed to save account update' , err: err })
+        }
+        
+    })
+
+    fastify.delete('/', { preValidation: [fastify.authenticate] }, async (req, reply) => {
+        const { accountName } = req.body;
+        const accountToDel = await Account.findOne({accountName: accountName, userId: req.user.userId})
+
+        if (!accountToDel) {
+            // If account is not found
+            reply.status(404).send({ error: `${accountName} not found`})
+        }
+
+        // Delete account and records linked to the account
+        const response = await Account.deleteOne({ accountName: accountName, userId: req.user.userId})
+        const responseRecord = await Record.deleteMany({ accountId: accountToDel._id })
+
+        if (response.acknowledged && response.deletedCount === 1) {
+            return { success: true, message: "Account deleted" }
+        }
+        else {
+            return reply.status(400).send({ error: "Unable to delete account", response: response })
+        }
     })
 }

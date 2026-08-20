@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { AccountProvider } from './contexts/AccountContext.tsx'
+import { ToastContainer } from 'react-toastify'
 import Navbar from './components/Navbar.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import RegisterPage from './pages/RegisterPage.tsx'
@@ -13,19 +15,22 @@ function App() {
     <div className="">
       <BrowserRouter>
         <AuthProvider>
-          <Navbar/>
+          <AccountProvider>
+            <Navbar/>
 
-          <div className="max-w-3xl text-center mx-auto space-y-10">
-            <Routes>
-              <Route path='/' element={<LandingPage />} />
-              <Route path='/register' element={<RegisterPage />} />
-              <Route path='/welcome' element={<WelcomePage />} />
-              <Route path='/login' element={<SignInPage />} />
-              <Route path='/accounts' element={<AccountsPage />} />
-            </Routes>
-          </div>
+            <div className="max-w-3xl text-center mx-auto space-y-10">
+              <Routes>
+                <Route path='/' element={<LandingPage />} />
+                <Route path='/register' element={<RegisterPage />} />
+                <Route path='/welcome' element={<WelcomePage />} />
+                <Route path='/login' element={<SignInPage />} />
+                <Route path='/accounts' element={<AccountsPage />} />
+              </Routes>
+            </div>
+          </AccountProvider>
         </AuthProvider>
       </BrowserRouter>
+      <ToastContainer position="bottom-center" autoClose={3000}/>
     </div>
   )
 }

@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         checkAuth();
     }, [])
 
-    const login = () => {
+    const login = async () => {
         setIsAuthenticated(true);
         navigate("/accounts");
     }
