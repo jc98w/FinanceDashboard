@@ -1,59 +1,142 @@
 import { useAccountCtx } from '../contexts/AccountContext'
+import type { Account } from '../types/account';
+
+type AccountField = 'accountName' | 'currentValue' | 'tags';
+
+interface FieldGroup {
+    element: HTMLElement,
+    editElement: HTMLInputElement,
+}
+
+interface RowElements {
+    editBtn: HTMLElement,
+    confirmBtnGroup: HTMLElement,
+    confirmBtn: HTMLElement,
+    revertBtn: HTMLElement,
+    accountName: FieldGroup,
+    currentValue: FieldGroup,
+    tags: FieldGroup
+}
 
 export default function AccountTableView() {
     const { accounts, updateAccount, delAccount } = useAccountCtx();
-    const accountFields = ['accountName', 'accountValue', 'tags'];
+    const accountFields: AccountField[] = ['accountName', 'currentValue', 'tags'];
+
+    const getRow = (index: number): RowElements | null => {
+        const row = {
+            editBtn: document.getElementById(`editBtn${index}`),
+            confirmBtnGroup: document.getElementById(`confirmBtnGroup${index}`),
+            confirmBtn: document.getElementById(`confirmBtn${index}`),
+            revertBtn: document.getElementById(`revertBtn${index}`),
+            accountName: {
+                element: document.getElementById(`accountName${index}`),
+                editElement: document.getElementById(`accountNameEdit${index}`) as HTMLInputElement
+            },
+            currentValue: {
+                element: document.getElementById(`currentValue${index}`),
+                editElement: document.getElementById(`currentValueEdit${index}`) as HTMLInputElement
+            },
+            tags: {
+                element: document.getElementById(`tags${index}`),
+                editElement: document.getElementById(`tagsEdit${index}`) as HTMLInputElement
+            }
+        }
+        try {
+            return row as unknown as RowElements;
+        }
+        catch {
+            return null;
+        }
+    }
 
     const editAccount = async (index: number) => {
         console.log(`FIXME: Edit account, ${index}`)
+        const row = getRow(index);
+        if (!row) {
+            console.error('Could not find requested row');
+            return;
+        }
+
+        row.editBtn.hidden = true;
+        row.confirmBtnGroup.hidden = false;
+        row.revertBtn.hidden = false;
+
         for (const field of accountFields) {
-            const element = document.getElementById(`${field}${index}`);
-            const elementEdit = document.getElementById(`${field}Edit${index}`);
-            const editBtn = document.getElementById(`editBtn${index}`);
-            const confirmBtnGroup = document.getElementById(`confirmBtnGroup${index}`);
-            const revertBtn = document.getElementById(`revertBtn${index}`);
-            if (element && elementEdit && editBtn && confirmBtnGroup && revertBtn) {
-                element.hidden = !element.hidden;
-                elementEdit.hidden = !elementEdit.hidden;
-                editBtn.hidden = !editBtn.hidden;
-                confirmBtnGroup.hidden = !confirmBtnGroup.hidden;
-            }
+            row[field].element.hidden = true;
+            row[field].editElement.hidden = false;
         }
     }
 
     const confirmEdit = async (index: number) => {
+        const row = getRow(index);
+        if (!row) {
+            console.error('Could not find requested row');
+            return;
+        }
 
+        const updates = {
+                accountName: row.accountName.editElement.value,
+                currentValue: row.currentValue.editElement.value as unknown as number,
+                tags: row.tags.editElement.value.split(',')
+            }
+        updateAccount(row.accountName.element.textContent, updates)
+
+        revertEdit(index, updates);
     }
 
-    const revertEdit = async (index: number) => {
+    const revertEdit = async (index: number, override?: Partial<Account>) => {
+        const row = getRow(index);
+        const source = override ?? accounts[index]
 
+        if (!row) {
+            console.error('Could not find requested row');
+            return;
+        }
+
+        row.editBtn.hidden = false;
+        row.confirmBtnGroup.hidden = true;
+        row.revertBtn.hidden = true;
+
+        for (const field of accountFields) {
+            row[field].element.hidden = false;
+            row[field].editElement.hidden = true;
+            // revert edits back to current account values
+            row[field].editElement.value = source[field] as string
+        }
     }
 
     const deleteAccount = async (index: number) => {
         const accountName = accounts[index].accountName;
         delAccount(accountName);
+        revertEdit(index);
     }
 
     const handleEdit = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { index } = event.target.dataset;
-        console.log('editing index ', index)
-        const confirmBtn = document.getElementById(`confirmBtn${index}`)
-        if (!confirmBtn) return
-        let hideConfirmBtn = true;
-        for (const field of accountFields) {
-            const currentValue = document.getElementById(`${field}${index}`)?.textContent;
-            const inputValue = (document.getElementById(`${field}Edit${index}`) as HTMLInputElement)?.value;
-            if (currentValue && inputValue) {
-                if (currentValue != inputValue) {
-                    if (+currentValue === +inputValue) {
-                        continue
+        try {
+            const index = event.target.dataset.index as unknown as number;
+            const row = getRow(index);
+            if (!row) throw Error();
+
+            let hideConfirmBtn = true;
+            for (const field of accountFields) {
+                const currentValue = row[field].element.textContent;
+                const inputValue = row[field].editElement.value;
+                if (currentValue && inputValue) {
+                    if (currentValue != inputValue) {
+                        if (+currentValue === +inputValue) {
+                            continue
+                        }
+                        hideConfirmBtn = false;
+                        break;
                     }
-                    hideConfirmBtn = false;
-                    break;
                 }
             }
+            row.confirmBtn.hidden = hideConfirmBtn;
         }
-        confirmBtn.hidden = hideConfirmBtn;
+        catch {
+            console.error('Error: Unable to detect edits on desired row');
+            return;
+        }
     }
 
     return (
@@ -69,15 +152,16 @@ export default function AccountTableView() {
                 
                 <tbody>
                 {
-                    accounts.map((value, index) => (
+                    accounts.map((value, index) => {
+                        return (
                         <tr key={ index } className='bg-gray-300 text-gray-900 border-b border-gray-400 [&>td]:py-3 [&>td]:pl-2'>
                             <td>
                                 <p id={`accountName${index}`} hidden={false} className='whitespace-nowrap'>{ value.accountName }</p>
                                 <input id={`accountNameEdit${index}`} data-index={index} hidden={true} type='text' onChange={handleEdit} defaultValue={ value.accountName } className='bg-gray-100 rounded-sm w-full pl-1'/>
                             </td>
                             <td className='inline-block'>
-                                <p id={`accountValue${index}`} hidden={false} className='whitespace-nowrap'>{ value.currentValue.toFixed(2) }</p>
-                                <input id={`accountValueEdit${index}`} data-index={index} hidden={true} type='number' onChange={handleEdit} defaultValue={ value.currentValue.toFixed(2) } className='bg-gray-100 rounded-sm w-full pl-1'/>
+                                <p id={`currentValue${index}`} hidden={false} className='whitespace-nowrap'>{ Number(value.currentValue).toFixed(2) }</p>
+                                <input id={`currentValueEdit${index}`} data-index={index} hidden={true} type='number' onChange={handleEdit} defaultValue={ Number(value.currentValue).toFixed(2) } className='bg-gray-100 rounded-sm w-full pl-1'/>
                             </td>
                             <td>
                                 <p id={`tags${index}`} hidden={false} className='text-sm lowercase whitespace-nowrap'>{ value.tags.join(', ') }</p>
@@ -94,7 +178,7 @@ export default function AccountTableView() {
                                 </div>
                             </td>
                         </tr>
-                    ))
+                    )})
                 }
                 </tbody>
             </table>
