@@ -79,6 +79,28 @@ export default async (fastify, opts) => {
         return { accounts: result }
     })
 
+    fastify.put('/update', {preValidation: [fastify.authenticate] }, async(req, reply) => {
+        const { userId } = req.user;
+        const { targetAccountName } = req.body;
+        const { accountName, currentValue, tags } = req.body.updates;
+        
+        try {
+            const account = await Account.findOne({ userId: userId, accountName: targetAccountName });
+            if (!account) return reply.status(404).send({ error: "Account not found" });
+            if (accountName) account.accountName = accountName;
+            if (currentValue) account.currentValue = currentValue;
+            if (tags) account.tags = tags;
+
+            await account.save()
+        
+            reply.status(200).send({ status: 'Updates successful' })
+        }
+        catch (err) {
+            reply.status(500).send({ error: 'Failed to save account update' , err: err })
+        }
+        
+    })
+
     fastify.delete('/', { preValidation: [fastify.authenticate] }, async (req, reply) => {
         const { accountName } = req.body;
         const accountToDel = await Account.findOne({accountName: accountName, userId: req.user.userId})
