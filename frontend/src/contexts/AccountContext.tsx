@@ -41,13 +41,37 @@ export const AccountProvider = ({ children }: PropsWithChildren) => {
     }
 
     const updateAccount = async (accountName: string, changes: Partial<Account>) => {
-        // FIXME: update in backend
-        setAccounts((currAccounts) => 
-            currAccounts.map((account) => {
-                if (account.accountName !== accountName) return account;
-                return { ...account, ...changes }
-            })
-        );
+        try {
+            const response = await fetch('/api/accounts/update',
+                {
+                    method: 'PUT',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        targetAccountName: accountName,
+                        updates: { ...changes }
+                    })
+                }
+            )
+            if (response.ok) {
+                setAccounts((currAccounts) => 
+                    currAccounts.map((account) => {
+                        if (account.accountName !== accountName) return account;
+                        return { ...account, ...changes }
+                    })
+                );
+            }
+            else {
+                throw new Error()
+            }
+            
+        }
+        catch {
+            console.error(changes)
+            toast.error('Unable to update account')
+        }
+        
     }
 
     const delAccount = async (accountName: string) => {
