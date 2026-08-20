@@ -1,13 +1,10 @@
-import type { Account } from '../types/account'
+import { useAccountCtx } from '../contexts/AccountContext';
 import AccountCard from './AccountCard'
 import useEmblaCarousel from 'embla-carousel-react'
 
-interface ViewProps {
-    accounts: Account[]
-}
-
-export default function AccountCardView({ accounts }: ViewProps) {
+export default function AccountCardView() {
     const [emblaRef] = useEmblaCarousel();
+    const { accounts } = useAccountCtx();
 
     return (
         <div className='overflow-hidden' ref={ emblaRef }>

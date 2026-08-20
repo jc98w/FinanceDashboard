@@ -1,10 +1,7 @@
-import type { Account } from '../types/account'
+import { useAccountCtx } from '../contexts/AccountContext'
 
-interface ViewProps {
-    accounts: Account[]
-}
-
-export default function AccountTableView({ accounts }: ViewProps) {
+export default function AccountTableView() {
+    const { accounts, updateAccount, delAccount } = useAccountCtx();
     const accountFields = ['accountName', 'accountValue', 'tags'];
 
     const editAccount = async (index: number) => {
@@ -33,7 +30,8 @@ export default function AccountTableView({ accounts }: ViewProps) {
     }
 
     const deleteAccount = async (index: number) => {
-        console.log(`FIXME: Delete account ${index}`)
+        const accountName = accounts[index].accountName;
+        delAccount(accountName);
     }
 
     const handleEdit = async (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useAccountCtx } from '../contexts/AccountContext';
 import AccountCardView from '../components/AccountCardView'
 import AccountTableView from '../components/AccountTableView'
 import AddAccountModal from '../components/AddAccountModal';
-import type { Account } from '../types/account'
 
-type AccountView = 'table' | 'card';
+type AccountViewType = 'table' | 'card';
 const ViewMap = {
     card: AccountCardView,
     table: AccountTableView
@@ -14,10 +14,10 @@ const ViewMap = {
 
 export default function AccountsPage() {
     const { isLoading, isAuthenticated } = useAuth();
+    const { accounts } = useAccountCtx();
     const navigate = useNavigate();
-    const [ accounts, setAccounts ] = useState<Account[]>([]);
     const [ isModalOpen, setIsModalOpen ] = useState<boolean>(false);
-    const [ viewMode, setViewMode ] = useState<AccountView>('table');
+    const [ viewMode, setViewMode ] = useState<AccountViewType>('table');
     const ActiveView = ViewMap[viewMode]
 
     // Redirect user if not logged in
@@ -26,28 +26,6 @@ export default function AccountsPage() {
             navigate('/login', { replace: true });
         }
     }, [isAuthenticated, isLoading, navigate])
-
-    // Fetch user's accounts
-    useEffect(() => {
-        if (!isAuthenticated) return;
-
-        const fetchAccounts = async () => {
-            const response = await fetch('/api/accounts/me', {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch accounts')
-            }
-            const data = await response.json();
-            setAccounts(data.accounts);
-        }
-
-        fetchAccounts();
-    }, [isAuthenticated])
 
     if (!isAuthenticated) {
         return null;
@@ -68,11 +46,11 @@ export default function AccountsPage() {
                     accounts.length === 0 ? (
                         <p>No Accounts Found</p>
                     ) : (
-                        <ActiveView accounts={ accounts }/>
+                        <ActiveView/>
                     )
                 }
             </div>
-            <AddAccountModal accounts={ accounts } isOpen={ isModalOpen } onClose={ () => setIsModalOpen(false) } />
+            <AddAccountModal isOpen={ isModalOpen } onClose={ () => setIsModalOpen(false) } />
         </div>
     )
 }
