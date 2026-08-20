@@ -61,6 +61,7 @@ export const AccountProvider = ({ children }: PropsWithChildren) => {
                         return { ...account, ...changes }
                     })
                 );
+                toast.success('Account updated');
             }
             else {
                 throw new Error()
