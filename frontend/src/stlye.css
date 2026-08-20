@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 @import "tailwindcss";
 
 @theme {
@@ -18,5 +19,5 @@ body {
         @apply bg-emerald-700 hover:bg-emerald-500;
 
         /* text */
-        @apply text-white uppercase text-sm tracking-wider mx-auto;
+        @apply text-white uppercase text-sm tracking-wider;
 }
