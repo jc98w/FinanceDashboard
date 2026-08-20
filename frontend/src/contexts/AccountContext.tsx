@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import type { Account } from '../types/account';
 
@@ -36,4 +36,10 @@ export const AccountProvider = ({ children }: PropsWithChildren) => {
             { children }
         </AccountContext.Provider>
     )
+}
+
+export const useAccountCtx = () => {
+    const context = useContext(AccountContext);
+    if (!context) throw new Error('Unable to retreive AccountContext');
+    return context;
 }
